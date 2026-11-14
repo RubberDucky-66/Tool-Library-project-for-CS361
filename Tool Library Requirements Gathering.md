@@ -94,3 +94,54 @@ A29:
 
 ## Q30: Will there be a way for staff to report broken, missing, or damaged tools and track maintenance schedules?
 A30:
+
+## Q31: What system does the County Library currently use for checkouts and memberships (vendor/product name)?
+A31:
+
+## Q32: How should the tool library verify that a library card is valid?  Is there an API, database access, or a data export we can use, and does it need to be real-time?
+A32:
+
+## Q33: Who at the County Library or county IT should we coordinate with on integration?
+A33:
+
+## Q34: Where will the system be hosted (county servers, cloud), and who maintains it after launch?
+A34:
+
+## Q35: How will staff log in—with existing county accounts or separate accounts?
+A35:
+
+## Q36: Which library card types are eligible to borrow tools (child, non-resident, temporary, etc.)?
+A36:
+
+## Q37: Is the two-week checkout 14 calendar days?  What happens if the due date lands on a day the location is closed?
+A37:
+
+## Q38: What are the tool library's hours, and how is it staffed?
+A38:
+
+## Q39: Is checkout staff-only, or will there be self-checkout?
+A39:
+
+## Q40: Is there existing scanner hardware, and should tools use barcodes or RFID tags?
+A40:
+
+## Q41: How should kits be tracked (e.g., a drill with batteries, charger, and bits)—as one item or as individual parts?
+A41:
+
+## Q42: Will the library lend consumables (blades, sandpaper, etc.), and are those tracked differently?
+A42:
+
+## Q43: How are fees paid—in person, online, or through the County Library's existing fine system?
+A43:
+
+## Q44: How many tools will be available at launch, and is there an existing inventory list we can import?
+A44:
+
+## Q45: What reports do staff need (overdue items, most-borrowed tools, usage over time, etc.)?
+A45:
+
+## Q46: Are there accessibility requirements the system must meet?
+A46:
+
+## Q47: What is the budget and target launch date?
+A47:
