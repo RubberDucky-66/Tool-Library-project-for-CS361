@@ -3,7 +3,6 @@ Talan Aria\
 Brent Grossman
 
 # Tool Library Q & A:
-Add questions whenever you like
 
 ## Q1: Since the tool library requires a valid county library card, should the system for the tool library be integrated with the already existing library system or should it be separate? Will users need a separate card for the Tool Library, or will their existing County Library card work?
 A1: The library card systems for books and the tools should be the same one.
