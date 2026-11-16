@@ -107,52 +107,52 @@ A29: We'll possibly have more tool lending locations in the future, so we should
 A30: We'll want a way for any employees to note broken, missing, or damaged tools. The tools that aren't currently borrowed can be either "ready to borrow" or "in maintenance", so we should be able to flag them either way.
 
 ## Q31: What system does the County Library currently use for checkouts and memberships (vendor/product name)?
-A31:
+A31: We have separate systems for checkouts and memberships. For this project, you'd access the membership system, but implement a new separate checkout system for tools.
 
 ## Q32: How should the tool library verify that a library card is valid?  Is there an API, database access, or a data export we can use, and does it need to be real-time?
-A32:
+A32: We have an API that can be called to check library card validity. It gives real-time responses.
 
 ## Q33: Who at the County Library or county IT should we coordinate with on integration?
-A33:
+A33: [Pretend I give you some contact information. But it'll be just me, really. 😊]
 
 ## Q34: Where will the system be hosted (county servers, cloud), and who maintains it after launch?
-A34:
+A34: Our IT team has hosting for our existing infrastructure. You'll coordinate with them to get a new server set up.
 
 ## Q35: How will staff log in—with existing county accounts or separate accounts?
-A35:
+A35: They should log in through their existing accounts via the same API we use for library cards.
 
 ## Q36: Which library card types are eligible to borrow tools (child, non-resident, temporary, etc.)?
-A36:
+A36: Only adult residents will be able to borrow tools.
 
 ## Q37: Is the two-week checkout 14 calendar days?  What happens if the due date lands on a day the location is closed?
-A37:
+A37: The two-week borrowing period is normally 14 calendar days. If the library is closed on the due date, the due date is pushed to the next open date.
 
 ## Q38: What are the tool library's hours, and how is it staffed?
-A38:
+A38:Operating hours are 8 AM - 6 PM M-Sa, 10 AM - 5 PM Su. There will be staff present during opening hours.
 
 ## Q39: Is checkout staff-only, or will there be self-checkout?
-A39:
+A39: All actual tool hand-offs have to go through a librarian. We'll want the system to be web-based. But we'll have local computers that people can access to check things out or reserve them. And a librarian should be able to reserve tools on someone's behalf if asked.
 
 ## Q40: Is there existing scanner hardware, and should tools use barcodes or RFID tags?
-A40:
+A40: We'll have an internal ID number for each, and we'd like them barcoded. We have scanners.
 
 ## Q41: How should kits be tracked (e.g., a drill with batteries, charger, and bits)—as one item or as individual parts?
-A41:
+A41: Kits count as a single item. Clerks will know to check the kits for all components upon return. Kits are labeled with their inventories.
 
 ## Q42: Will the library lend consumables (blades, sandpaper, etc.), and are those tracked differently?
-A42:
+A42: For simple consumables, the clerks can simply replace. For things requiring fixes, they can send them to our tech staff. The only consumables are in kits; we don't loan things like sandpaper on their own.
 
 ## Q43: How are fees paid—in person, online, or through the County Library's existing fine system?
-A43:
+A43: They're collected in-person. It would be difficult to interface with the existing online payment system due to the book inventory being tracked by the existing system, not the tool tracking system. But it would be nice to offer an online payment option.
 
 ## Q44: How many tools will be available at launch, and is there an existing inventory list we can import?
-A44:
+A44: We'll start with about 50 item types, and about 200 borrowable items. We'll provide a list.
 
 ## Q45: What reports do staff need (overdue items, most-borrowed tools, usage over time, etc.)?
-A45:
+A45: We'd like to start with these reports: overdue, currently checked out, tools in repair, and most-borrowed.
 
 ## Q46: Are there accessibility requirements the system must meet?
-A46:
+A46: We should be WCAG 2.1 AA-compliant.
 
 ## Q47: What is the budget and target launch date?
-A47:
+A47: [Pretend I give you an agreeable launch date and a compelling budget number. 😊]
