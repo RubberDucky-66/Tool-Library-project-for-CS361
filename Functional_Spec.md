@@ -46,12 +46,12 @@ The following features and integrations are beyond the scope of the system and a
 ```mermaid
 flowchart LR
     %% Actors
-    Patron["🧑 Patron"]
-    Clerk["🧑 Clerk"]
-    Cataloger["🧑 Cataloger"]
-    Manager["🧑 Manager"]
-    MembershipAPI["🔌 County Membership & Auth API"]
-    NotificationSys["🔌 County Text/Email System"]
+    Patron["Patron"]
+    Clerk["Clerk"]
+    Cataloger["Cataloger"]
+    Manager["Manager"]
+    MembershipAPI["County Membership & Auth API"]
+    NotificationSys["County Text/Email System"]
 
     %% System Boundary
     subgraph System ["County Tool Library System"]
@@ -123,16 +123,13 @@ flowchart TD
 
     PatronAction -->|Reserve / Waitlist| CardAuth[Enter Library Card #]
     CardAuth --> APIVerify{API: Valid Adult Resident & Good Standing?}
-    APIVerify -->|No / Blocked| RejectPatron[Display Eligibility or Account Restriction Error]
+    APIVerify -->|No| RejectPatron[Display Eligibility or Account Restriction Error, Direct to desk for more details]
     APIVerify -->|Yes| AddWaitlist[Add to Waitlist & Send Confirmation]
 
     PatronAction -->|View Account / Renew| AccountDash[View Active Loans, Due Dates, Holds & Fees]
-    AccountDash --> RenewCheck{Eligible for 1-Time Renewal?}
-    RenewCheck -->|Yes| ExtendDue[Extend Due Date - Shift if Closed]
-    RenewCheck -->|No| CancelHold[Option to Cancel Active Waitlist Holds]
 
     %% Staff Flow
-    RoleCheck -->|Staff| StaffLogin[Staff SSO Login via Membership API]
+    RoleCheck -->|Staff| StaffLogin[Staff Login via Membership API]
     StaffLogin --> MainDash[Staff Main Dashboard]
     MainDash --> TaskSelect{Select Task}
 
@@ -165,7 +162,7 @@ flowchart TD
     %% Admin Subflow
     TaskSelect -->|Inventory / Reports / Admin| RoleGate{Verify Staff Role}
     RoleGate -->|Clerk| RunReports[Run Overdue / Active / Repair / Popular Reports]
-    RoleGate -->|Cataloger| ManageInv[Bulk Import / Add / Edit / Retire Barcoded Tools]
+    RoleGate -->|Cataloger| ManageInv[Add / Edit / Retire Barcoded Tools]
     RoleGate -->|Manager| ManageStaff[Manage Staff Roles & Permissions]
 ```
 
