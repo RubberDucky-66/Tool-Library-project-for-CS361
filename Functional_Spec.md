@@ -24,7 +24,7 @@ The software system requested by the County Library will enable adult patrons (1
 ### Staff Scenarios
 1. **Clerk Return, Inspection & Late Fee Collection:** A patron walks into the library with a pressure washer that is two days past its adjusted due date. Clerk Marcus scans the pressure washer's barcode into the check-in screen. The system accounts for the 1-day grace period and automatically calculates a $3.00 late fee (at the $3/day high-demand tool rate). Marcus inspects the pressure washer kit against its attached inventory label, verifies all nozzles and hoses are present, and notices the trigger wand is leaking. He checks the "Needs Servicing" box, enters technician notes ("Leaking trigger wand"), and toggles the tool's status to "In Maintenance," which keeps the waitlist intact while preventing immediate re-borrowing. Finally, he collects the $3.00 fee in person and completes the check-in. Marcus then replenishes any depleted kit consumables (such as soaps) from the stock room.
 2. **Cataloger Inventory Addition & Manager Role Administration:** A local contractor donates a brand-new cordless drill kit to the library. Cataloger Chloe logs into the employee portal using her existing county staff credentials. She navigates to the Inventory Management screen, enters the drill kit's details (categorizing it as a single kit item with its component list, replacement value, and standard $1/day late rate), generates and prints an internal barcode label, and sets its status to "Ready to Borrow." Later that afternoon, Store Manager Brenda logs in, navigates to the Staff Administration menu, and promotes Chloe's permissions to Manager so Chloe can onboard two newly hired part-time clerks next week.
-3. **Phone/Desk Assisted Reservation & Damage History Check:** A patron calls the Tool Library desk because they don't have internet access at home and asks to reserve a ladder. Clerk Marcus looks up the patron's library card in the staff portal, confirms their card is active and in good standing, and places them on the ladder's waitlist on their behalf. Later that day, when another patron comes to check out a circular saw, Marcus notices an alert on the checkout screen showing two prior accidental damage notes on the patron's history; since damage is covered by the library and no items are currently overdue or lost, Marcus completes the checkout as normal.
+3. **Phone/Desk Assisted Reservation:** A patron calls the Tool Library desk because they don't have internet access at home and asks to reserve a ladder. Clerk Marcus looks up the patron's library card in the staff portal, confirms their card is active and in good standing, and places them on the ladder's waitlist on their behalf.
 4. **Lost Item Billing Ceiling & Replacement Liability:** A patron calls to report that a $120 laser level they borrowed three weeks ago was stolen from their garage. Clerk Marcus pulls up the patron's active loans and clicks "Mark Item Lost." Because the tool is unreturned rather than merely late, the system overrides the standard $20 late-fee cap and assesses the full $120 replacement value to the patron's account, locking their borrowing privileges until the replacement fee is paid in person (or potentially removed by a manager).
 5. **Missing Kit Components at Check-In:** A patron returns a cordless impact driver kit, but when Clerk Marcus checks the contents against the laminated inventory list inside the case, the battery charger is missing. Marcus flags the missing component on the check-in screen, preventing the kit from returning to "Ready to Borrow" status, and notifies the patron that the kit cannot be cleared as complete until the charger is returned (or billed as a lost item).
 
@@ -95,18 +95,24 @@ flowchart LR
 
 ## 5. Use Cases
 
-| ID | Use Case Name | Primary Actor(s) | Description |
-| :--- | :--- | :--- | :--- |
-| **UC-01** | Browse & Filter Tool Catalog | Patron, Public User | Users view all tools across categories, filtering by name, category, type, and status (*Ready to Borrow*, *Checked Out*, *In Maintenance*), along with live waitlist counts. |
-| **UC-02** | Manage Reservations & Renewals | Patron, Clerk | Patrons join or cancel waitlists online or via staff. Once at the front of the queue, patrons have 3 days to pick up the item. Patrons may also execute a one-time loan renewal matching the original loan duration. Clerks can place waitlist reservations on a patron's behalf (in person or over the phone). |
-| **UC-03** | Electronic Liability Waiver | Patron | First-time borrowers electronically sign a one-time liability waiver on a local kiosk or personal device before any tool checkout can be finalized. |
-| **UC-04** | Patron Verification & Card Issuance | Clerk | Staff verify patron photo ID, validate active adult (18+) county resident status via the real-time Membership API, or issue new library cards if needed. |
-| **UC-05** | Tool Checkout | Clerk, Cataloger, Manager | Staff scan the patron's card and up to 5 tool barcodes. System enforces rules (waiver signed, no overdue/lost tools, under 5-item cap) and sets due dates (up to 14 calendar days, shifted forward if landing on a closed day). |
-| **UC-06** | Tool Check-In & Fee Assessment | Clerk, Cataloger, Manager | Staff scan returned tools, verify kit contents via inventory labels, and mark items returned. System applies a 1-day grace period (extends until closing on the next open day), calculates late fees ($1/day standard, $3/day high-demand, capped at replacement cost or $20), and records in-person payments. Patrons are financially liable for lost tools while simply damaged tools are covered by the library. Clerks replace simple kit consumables upon return, while sending mechanical/electrical repairs to tech staff. |
-| **UC-07** | Maintenance & Condition Tracking | Clerk, Cataloger, Manager | Staff flag unborrowed tools as *In Maintenance* or *Ready to Borrow*, logging repair descriptions or missing/damaged notes without dropping patrons from the waitlist. |
-| **UC-08** | Inventory & Donation Management | Cataloger, Manager | Staff add new or donated tools/kits, assign internal barcoded IDs, set loan durations and replacement values, update metadata, or retire lost/broken items. |
-| **UC-09** | Staff Role Administration | Manager | Managers add or remove Clerks and Catalogers and modify staff permission levels using existing county employee accounts. |
-| **UC-10** | Operational Reporting | Clerk, Cataloger, Manager | Staff generate and print/export reports for Overdue Items, Currently Checked Out Tools, Tools in Repair, and Most-Borrowed Tools, retaining historical records indefinitely. |
+| Use Case Name | Primary Actor(s) | Description |
+| :--- | :--- | :--- |
+| Browse Tool Catalog | Patron, Public User | Users view all tools across every category in the catalog. Each tool shows its current status (*Ready to Borrow*, *Checked Out*, or *In Maintenance*) along with a live waitlist count. |
+| Filter Tool Catalog | Patron, Public User | Users narrow the catalog by tool name, category, type, and status (*Ready to Borrow*, *Checked Out*, *In Maintenance*) to find specific tools. Waitlist counts stay live in the filtered results. |
+| Manage Reservations | Patron, Clerk | Patrons join or cancel waitlists for tools, either online or through staff. Once a patron reaches the front of the queue, they have 3 days to pick up the item. Clerks can also place waitlist reservations on a patron's behalf, in person or over the phone. |
+| Manage Renewals | Patron, Clerk | Patrons may renew a loan one time. The renewal period matches the duration of the original loan. |
+| Electronic Liability Waiver | Patron | First-time borrowers electronically sign a one-time liability waiver on a local kiosk or personal device. The waiver must be signed before any tool checkout can be finalized. |
+| Patron Verification | Clerk | Staff verify the patron's photo ID and confirm active adult (18+) county resident status through the real-time Membership API. |
+| Card Issuance | Clerk | Staff issue a new library card when the patron does not already have one. |
+| Tool Checkout | Clerk, Cataloger, Manager | Staff scan the patron's card and up to 5 tool barcodes. The system enforces the checkout rules (waiver signed, no overdue or lost tools, under the 5-item cap) and sets due dates of up to 14 calendar days. A due date that lands on a closed day is shifted forward. |
+| Tool Check-In | Clerk, Cataloger, Manager | Staff scan returned tools, verify kit contents against the inventory labels, and mark the items returned. Clerks replace simple kit consumables on return. Mechanical or electrical repairs are sent to tech staff. |
+| Fee Assessment | Clerk, Cataloger, Manager | At check-in, the system applies a 1-day grace period that extends until closing on the next open day. It then calculates late fees ($1/day standard, $3/day high-demand), capped at the tool's replacement cost or $20. Staff record in-person payments. Patrons are financially liable for lost tools, while tools that are simply damaged are covered by the library. |
+| Maintenance Tracking | Clerk, Cataloger, Manager | Staff flag tools that are not currently borrowed as *In Maintenance* or *Ready to Borrow* and log a repair description. Patrons stay on the waitlist while a tool is in maintenance. |
+| Condition Tracking | Clerk, Cataloger, Manager | Staff record missing or damaged notes on a tool so its condition is documented. Patrons stay on the waitlist. |
+| Inventory Management | Cataloger, Manager | Staff add new tools or kits and assign each an internal barcoded ID. They set loan durations and replacement values, update tool metadata, and retire items that are lost or broken. |
+| Donation Management | Cataloger, Manager | Staff add donated tools or kits to the inventory and assign each an internal barcoded ID. They also set the loan duration and replacement value for each donated item. |
+| Staff Role Administration | Manager | Managers add or remove Clerks and Catalogers and modify staff permission levels, using existing county employee accounts. |
+| Operational Reporting | Clerk, Cataloger, Manager | Staff generate and print or export reports for Overdue Items, Currently Checked Out Tools, Tools in Repair, and Most-Borrowed Tools. Historical records are retained indefinitely. |
 
 ---
 
@@ -168,35 +174,58 @@ flowchart TD
 
 ---
 
-## 7. User Screens (Wireframe Specifications)
+## 7. User Screens
 
-### 1. Patron Public Catalog & Account Screen (Responsive Web)
-* **Top Navigation Bar:** Displays the County Tool Library logo, location selector (future-proofing for multi-branch support), a global search bar, and a "My Account / Log In" button.
-* **Filter Sidebar / Drawer:** Checkboxes and dropdowns to filter tools by **Category** (e.g., Woodworking, Plumbing, Lawn & Garden), **Tool Type**, and **Availability Status** (*Ready to Borrow*, *Checked Out*, *In Maintenance*).
-* **Tool Catalog Grid:** Responsive card layout showing tool photo, item name, standard loan duration (e.g., 7 days or 14 days), current status badge, waitlist queue count (e.g., "2 people waiting"), and a primary **"Join Waitlist / Reserve"** button.
-* **Patron Account Drawer/Modal:** Displays checked-out tools with adjusted due dates, a **"Renew Loan"** button (disabled if already renewed once or if waitlisted), active waitlist holds with a **"Cancel Hold"** button, electronic waiver status badge, and any outstanding late fees due at the desk.
+### **1. Patron Catalog & Account Screen**
 
-### 2. Staff Login Screen
-* **Layout:** Centered authentication card compliant with WCAG 2.1 AA contrast and keyboard navigation standards.
-* **Elements:** County Employee ID / Username field, Password field, and a **"Sign In with County Credentials"** button authenticating directly against the County Membership & Auth API.
+![Patron Catalog & Account Screen](wireframe_IMGS/01_patron_catalog_account.png)
 
-### 3. Main Staff Dashboard Screen
-* **Left Side Navigation:** Vertical menu featuring **Dashboard** (active), **Check Out Tools**, **Check In Tools**, **Inventory Management** (visible to Catalogers/Managers), **Reports**, and **Staff Admin** (visible to Managers only).
-* **Top Header:** Displays current location name, operating hours status, logged-in staff member's name and role badge, and live system date/time.
-* **Central Workspace:** Quick-action tiles for **Check Out** and **Check In**, a live feed of **Expiring 3-Day Holds** awaiting pickup, a summary widget of **Tools Currently in Maintenance**, and a quick-lookup search bar to reserve tools on a patron's behalf.
+The Patron Catalog screen displays the County Tool Library logo, location selector, search bar, and available tools. Patrons can filter tools by category, tool type, and availability, view loan durations and waitlist counts, and select Join Waitlist / Reserve. The My Account button opens an account drawer where patrons can view checked-out tools, renew eligible loans, cancel waitlist holds, check waiver status, and view outstanding late fees.
 
-### 4. Tool Check-Out Screen
-* **Left Side Navigation:** Persistent navigation rail.
-* **Patron Verification Panel (Top):** Input field for barcode scanner (or manual card number entry), real-time API status readout (**Valid Adult Resident**), **Photo ID Verified** confirmation checkbox, **Electronic Waiver Signed** indicator (with a button to push the waiver prompt to the patron kiosk), and historical borrower notes (past loss/damage counter).
-* **Active Loan & Restriction Banner:** Displays current active tool count (e.g., `2 / 5 Tools Checked Out`) and blocks checkout if overdue items, lost items, or unpaid fees exist.
-* **Checkout Cart (Bottom):** Barcode scan input for tools/kits, itemized list showing internal ID, tool name, kit component reminder, and auto-calculated due date, finalized by a **"Complete Checkout"** button.
+---
 
-### 5. Tool Check-In & Maintenance Screen
-* **Left Side Navigation:** Persistent navigation rail.
-* **Tool & Loan Summary Panel:** Displays scanned tool barcode, name, borrowing patron details, checkout date, due date, and a prominent **Kit Contents Checklist** (e.g., *"Verify: 1x Drill, 2x Batteries, 1x Charger, 1x Case"*) **Missing Kit Component(s)** checkbox/flag alongside the Kit Contents Checklist.
-* **Fee Calculation & Payment Box:** Automatically displays days overdue past the 1-day grace period, applicable daily rate ($1/day or $3/day), capped fee total (never exceeding replacement value or $20), a **"Mark Paid In-Person"** button, and a **"Mark Item Lost"** option.
-* **Condition & Maintenance Panel:** Radio toggle between **"Ready to Borrow"** and **"In Maintenance"**, a text area for **Technician / Damage Notes**, and a primary **"Complete Check-In"** button.
+### **2. Staff Login Screen**
 
-### 6. Inventory Management & Reporting Screens
-* **Inventory Management (Cataloger/Manager):** Searchable data table of all 200+ items with columns for Internal Barcode ID, Tool Name, Category, Loan Duration, Replacement Value, and Status. Includes an **"+ Add New / Donated Tool"** modal form and a **"Print Barcode Label"** action.
-* **Operational Reports (All Staff):** Tabbed interface allowing one-click generation and CSV/Print export of the four core reports: **Overdue Items**, **Currently Checked Out**, **Tools in Repair**, and **Most-Borrowed Tools**.
+![Staff Login Screen](wireframe_IMGS/02_staff_login.png)
+
+The Staff Login screen displays a centered authentication form with a County Employee ID / Username field and Password field. Staff enter their county credentials and select Sign In with County Credentials to authenticate through the County Membership & Auth API and access the staff dashboard.
+
+---
+
+### **3. Main Staff Dashboard Screen**
+
+![Main Staff Dashboard Screen](wireframe_IMGS/03_staff_dashboard.png)
+
+The Main Staff Dashboard displays the current location, operating hours, logged-in staff member, role, and system date and time. Staff can use the left navigation menu to access the Dashboard, Check Out Tools, Check In Tools, Inventory Management, and Reports, while Staff Admin is available only to Managers. The central workspace provides quick-action buttons for checking out and checking in tools, a live feed of expiring 3-Day Holds, a summary of tools currently in maintenance, and a patron lookup search bar for reserving tools on a patron's behalf.
+
+---
+
+### **4. Tool Check-Out Screen**
+
+![Tool Check-Out Screen](wireframe_IMGS/04_tool_checkout.png)
+
+The Tool Check-Out screen allows staff to verify a patron using their library card barcode or manually entered card number. Staff can review the membership API status, verify photo ID, check electronic waiver status, review historical borrower notes, and check the patron's active loan count and checkout restrictions. Staff can then scan tools into the checkout cart, review internal barcode IDs, tool names, kit component reminders, and automatically calculated due dates before selecting Complete Checkout to finalize the transaction.
+
+---
+
+### **5. Tool Check-In & Maintenance Screen**
+
+![Tool Check-In & Maintenance Screen](wireframe_IMGS/05_tool_checkin.png)
+
+The Tool Check-In & Maintenance screen displays the scanned tool information, borrowing patron details, checkout date, due date, and kit contents checklist. Staff can identify missing kit components using the checklist, review automatically calculated late fees, mark fees as paid in person, or mark an item as lost. They can also select whether the tool is Ready to Borrow or In Maintenance, enter technician or damage notes, and select Complete Check-In to finish the return.
+
+---
+
+### **6. Inventory Management Screen**
+
+![Inventory Management Screen](wireframe_IMGS/06_inventory_management.png)
+
+The Inventory Management screen allows Catalogers and Managers to search and view the library's inventory of 200+ tools in a data table. Staff can review internal barcode IDs, tool names, categories, loan durations, replacement values, and statuses, as well as add new or donated tools through a form and print barcode labels.
+
+---
+
+### **7. Operational Reports Screen**
+
+![Operational Reports Screen](wireframe_IMGS/07_operational_reports.png)
+
+The Operational Reports screen allows staff to generate and view four reports: Overdue Items, Currently Checked Out, Tools in Repair, and Most-Borrowed Tools. Staff can select a report tab to display the corresponding information and export the results as a CSV file or print the report.
