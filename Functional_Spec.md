@@ -65,6 +65,7 @@ flowchart LR
         UC8(["Add, Update, & Remove Inventory"])
         UC9(["Manage Staff Roles & Permissions"])
         UC10(["Generate Operational Reports"])
+        UC11(["Issue New Library Card"])
     end
 
     %% Patron Associations
@@ -73,11 +74,13 @@ flowchart LR
     Patron --> UC3
 
     %% Role Inheritance & Staff Associations
+    Clerk --> UC2
     Clerk --> UC4
     Clerk --> UC5
     Clerk --> UC6
     Clerk --> UC7
     Clerk --> UC10
+    Clerk --> UC11
 
     Cataloger -.->|inherits| Clerk
     Cataloger --> UC8
@@ -87,6 +90,7 @@ flowchart LR
 
     %% External System Associations
     UC4 --> MembershipAPI
+    UC11 --> MembershipAPI
     UC2 -.->|triggers alerts| NotificationSys
     UC6 -.->|triggers due/overdue alerts| NotificationSys
 ```
@@ -108,7 +112,7 @@ flowchart LR
 | Tool Check-In | Clerk, Cataloger, Manager | Staff scan returned tools, verify kit contents against the inventory labels, and mark the items returned. Clerks replace simple kit consumables on return. Mechanical or electrical repairs are sent to tech staff. |
 | Fee Assessment | Clerk, Cataloger, Manager | At check-in, the system applies a 1-day grace period that extends until closing on the next open day. It then calculates late fees ($1/day standard, $3/day high-demand), capped at the tool's replacement cost or $20. Staff record in-person payments. Patrons are financially liable for lost tools, while tools that are simply damaged are covered by the library. |
 | Maintenance Tracking | Clerk, Cataloger, Manager | Staff flag tools that are not currently borrowed as *In Maintenance* or *Ready to Borrow* and log a repair description. Patrons stay on the waitlist while a tool is in maintenance. |
-| Condition Tracking | Clerk, Cataloger, Manager | Staff record missing or damaged notes on a tool so its condition is documented. Patrons stay on the waitlist. |
+| Condition Tracking | Clerk, Cataloger, Manager | Staff record missing or damaged notes on a tool so its condition is documented. Patrons stay on the waitlist. Damage and loss are also recorded on the borrower's account and shown to the clerk at checkout. |
 | Inventory Management | Cataloger, Manager | Staff add new tools or kits and assign each an internal barcoded ID. They set loan durations and replacement values, update tool metadata, and retire items that are lost or broken. |
 | Donation Management | Cataloger, Manager | Staff add donated tools or kits to the inventory and assign each an internal barcoded ID. They also set the loan duration and replacement value for each donated item. |
 | Staff Role Administration | Manager | Managers add or remove Clerks and Catalogers and modify staff permission levels, using existing county employee accounts. |
@@ -128,11 +132,12 @@ flowchart TD
     ItemSelect --> PatronAction{Select Action}
 
     PatronAction -->|Reserve / Waitlist| CardAuth[Enter Library Card #]
-    CardAuth --> APIVerify{API: Valid Adult Resident & Good Standing?}
-    APIVerify -->|No| RejectPatron[Display Eligibility or Account Restriction Error, Direct to desk for more details]
-    APIVerify -->|Yes| AddWaitlist[Add to Waitlist & Send Confirmation]
-
-    PatronAction -->|View Account / Renew| AccountDash[View Active Loans, Due Dates, Holds & Fees]
+    PatronAction -->|View Account / Renew| CardAuth
+    CardAuth --> APIVerify{API: Valid Adult Resident Card?}
+    APIVerify -->|No| RejectPatron[Display Eligibility Error, Direct to desk for more details]
+    APIVerify -->|Yes| AuthAction{Requested Action}
+    AuthAction -->|Reserve| AddWaitlist[Add to Waitlist & Send Confirmation]
+    AuthAction -->|Account| AccountDash[View Active Loans, Due Dates, Holds & Fees]
 
     %% Staff Flow
     RoleCheck -->|Staff| StaffLogin[Staff Login via Membership API]
@@ -153,13 +158,13 @@ flowchart TD
     TaskSelect -->|Check In Tools / Report Lost| ScanToolIn[Scan Tool Barcode or Select Active Loan]
     ScanToolIn --> LostCheck{Item Reported Lost / Unreturned?}
     LostCheck -->|Yes| MarkLost[Mark Lost: Bill Full Replacement Value & Lock Account]
-    LostCheck -->|No| KitCheck{Kit Complete & Consumables Replenished?}
-    KitCheck -->|Missing Part| FlagIncomplete[Flag Missing Component & Hold 'Ready' Status]
-    KitCheck -->|Complete| LateCheck{Past Due Date + 1-Day Grace Period?}
+    LostCheck -->|No| LateCheck{Past Due Date + 1-Day Grace Period?}
     LateCheck -->|Yes| CalcFine[Calculate Fee: $1 or $3/day, Cap at Replacement/$20]
     CalcFine --> CollectInPerson[Record In-Person Fee Payment]
-    LateCheck -->|No| ConditionCheck{Needs Repair / Servicing?}
-    CollectInPerson --> ConditionCheck
+    LateCheck -->|No| KitCheck{Kit Complete & Consumables Replenished?}
+    CollectInPerson --> KitCheck
+    KitCheck -->|Missing Part| FlagIncomplete[Flag Missing Component & Hold 'Ready' Status]
+    KitCheck -->|Complete| ConditionCheck{Needs Repair / Servicing?}
     ConditionCheck -->|Yes| SetMaint[Set Status: 'In Maintenance' + Tech Notes]
     ConditionCheck -->|No| SetReady[Set Status: 'Ready to Borrow']
     SetMaint --> NotifyNext[Hold Waitlist Queue Until 'Ready to Borrow']
